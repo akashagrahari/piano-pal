@@ -26,7 +26,7 @@ class Homepage extends React.Component {
 
     render() {
         return (
-            <div className='homepage bg-dark'>
+            <div>
                 <Container fluid className='jumbotron text-center heading'>
                     <div className='container-fluid '>
                         <h1 className="jumbotron-heading">Piano Pal</h1>
@@ -55,7 +55,7 @@ class Homepage extends React.Component {
                                 </div>
                             </div>
                             <div className='col-lg-4'>
-                                <BsMusicNoteBeamed size={80} scale />
+                                <BsMusicNoteBeamed size={80} />
                                 <div className='how-to-text'>
                                     <h4 className='text-muted'>Play along and learn the song </h4>
                                 </div>

@@ -18,7 +18,7 @@ class Header extends React.Component {
         return (
             < Navbar bg="dark" variant="dark" expand="lg" fixed="top">
                 <Container fluid>
-                    <Navbar.Brand href="#">Piano Pal</Navbar.Brand>
+                    <Navbar.Brand href="/">Piano Pal</Navbar.Brand>
                     {/* <Navbar.Toggle aria-controls="navbarScroll" /> */}
                     <Navbar.Collapse id="navbarScroll">
                         <Nav
@@ -49,7 +49,8 @@ class Header extends React.Component {
                             />
                             <Button variant="outline-light">Search</Button>
                         </Form> */}
-                        <Button variant="outline-light">Get Started</Button>
+                        <Button variant="outline-light header-button" href='/sign-in'>Sign in</Button>
+                        <Button variant="outline-light header-button" href='/sign-up'>Sign up</Button>
                         {/* <Button variant="outline-light">Search</Button> */}
                     </Navbar.Collapse>
                 </Container>

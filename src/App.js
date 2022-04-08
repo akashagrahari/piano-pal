@@ -1,34 +1,51 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import Header from './Header.js';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import Homepage from './Homepage';
+import PageWrapper from './PageWrapper';
 
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
+import GetStarted from './GetStarted';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
   }
 
-  componentDidMount() {
-    console.log("yay");
-  }
+  // componentDidMount() {
+  //   console.log("yay");
+  // }
 
   render() {
     return (
       <BrowserRouter>
         <Routes>
           <Route path='/' element={
-            <div>
-              <Header></Header>
-              <Homepage></Homepage>
-            </div>
+            <PageWrapper
+              page={
+                <Homepage></Homepage>
+              }>
+            </PageWrapper>
+          }>
+          </Route>
+          <Route path='/sign-in' element={
+            <PageWrapper
+              page={
+                <GetStarted formType='signIn'></GetStarted>
+              }>
+            </PageWrapper>
+          }>
+          </Route>
+          <Route path='/sign-up' element={
+            <PageWrapper
+              page={
+                <GetStarted formType='signUp'></GetStarted>
+              }>
+            </PageWrapper>
           }>
           </Route>
         </Routes>
