@@ -47,6 +47,7 @@ function GetStarted(props) {
             updateFormState(() => ({ ...formState, formType: "confirmSignUp" }));
         } catch (error) {
             console.log('error signing up:', error.message);
+            alert(error.message);
         }
     }
 
@@ -59,6 +60,7 @@ function GetStarted(props) {
             updateFormState(() => ({ ...formState, formType: "signIn" }));
         } catch (error) {
             console.log('error signing up:', error.message);
+            alert(error.message);
         }
     }
 
@@ -74,6 +76,7 @@ function GetStarted(props) {
             // updateFormState(() => ({ ...formState, formType: "signedIn" }));
         } catch (error) {
             console.log('error signing up:', error.message);
+            alert(error.message);
         }
     }
 
@@ -83,7 +86,7 @@ function GetStarted(props) {
 
                 <div className='container-fluid '>
                     {
-                        formType === 'signUp' && (
+                        formState.formType === 'signUp' && (
                             <Form className='form-get-started' onSubmit={signUp}>
                                 <h1 className="jumbotron-heading">Sign Up</h1>
                                 <Form.Group className="mb-3" controlId="formBasicUsername">
@@ -105,7 +108,7 @@ function GetStarted(props) {
                         )
                     }
                     {
-                        formType === 'signIn' && (
+                        formState.formType === 'signIn' && (
                             <Form className='form-get-started' onSubmit={signIn}>
                                 <h1 className="jumbotron-heading">Sign In</h1>
                                 <Form.Group className="mb-3" controlId="formBasicUsername">
@@ -123,8 +126,8 @@ function GetStarted(props) {
                         )
                     }
                     {
-                        formType === 'confirmSignUp' && (
-                            <Form className='form-get-started' onSubmit={this.confirmSignUp}>
+                        formState.formType === 'confirmSignUp' && (
+                            <Form className='form-get-started' onSubmit={confirmSignUp}>
                                 <h1 className="jumbotron-heading">Confirm Sign Up</h1>
                                 <Form.Group className="mb-3" controlId="formBasicPassword">
                                     <Form.Label>Auth Code</Form.Label>
