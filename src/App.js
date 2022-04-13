@@ -10,15 +10,62 @@ import {
   Route,
 } from "react-router-dom";
 import GetStarted from './GetStarted';
+import { Auth } from 'aws-amplify';
+import { useNavigation } from 'react-router-dom';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      formType: '',
+      signedIn: false,
+    }
+    this.authenticate();
+    if (this.getToken()) {
+      this.state.signedIn = true;
+    }
   }
 
-  // componentDidMount() {
-  //   console.log("yay");
-  // }
+  getFormType() {
+    return sessionStorage.getItem('formType');
+  }
+
+  updateFormType() {
+    if (this.getToken()) {
+      sessionStorage.setItem('formType', 'signedIn');
+    }
+  }
+
+  setToken(tokenString) {
+    sessionStorage.setItem('token', tokenString);
+  }
+
+  getToken() {
+    const tokenString = sessionStorage.getItem('token');
+    return tokenString;
+  }
+
+  async logout() {
+    try {
+      await Auth.signOut({ global: true });
+      sessionStorage.clear();
+      this.setState({ signedIn: false });
+      this.forceUpdate();
+    } catch (error) {
+      console.log('error signing out: ', error);
+    }
+  }
+
+  authenticate() {
+    Auth.currentAuthenticatedUser()
+      .then(user => {
+        console.log('user is authenticated: ', user);
+        this.setToken(user.username);
+      })
+      .catch(err => {
+        console.log(err);
+      });;
+  }
 
   render() {
     return (
@@ -26,6 +73,9 @@ class App extends React.Component {
         <Routes>
           <Route path='/' element={
             <PageWrapper
+              signedIn={this.state.signedIn}
+              getToken={this.getToken}
+              logout={this.logout}
               page={
                 <Homepage></Homepage>
               }>
@@ -34,16 +84,26 @@ class App extends React.Component {
           </Route>
           <Route path='/sign-in' element={
             <PageWrapper
+              signedIn={this.state.signedIn}
+              getToken={this.getToken}
+              logout={this.logout}
               page={
-                <GetStarted formType='signIn'></GetStarted>
+                <GetStarted formType={this.getFormType() || 'signIn'}
+                  setToken={this.setToken} getToken={this.getToken}
+                ></GetStarted>
               }>
             </PageWrapper>
           }>
           </Route>
           <Route path='/sign-up' element={
             <PageWrapper
+              signedIn={this.state.signedIn}
+              getToken={this.getToken}
+              logout={this.logout}
               page={
-                <GetStarted formType='signUp'></GetStarted>
+                <GetStarted formType={this.getFormType() || 'signUp'}
+                  setToken={this.setToken} getToken={this.getToken}
+                ></GetStarted>
               }>
             </PageWrapper>
           }>
@@ -55,25 +115,5 @@ class App extends React.Component {
   }
 }
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
 
 export default App;

@@ -1,4 +1,28 @@
 {
+  "main": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-pianopal-main-201102-authRole",
+      "UnauthRoleArn": "arn:aws:iam::045671846963:role/amplify-pianopal-main-201102-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::045671846963:role/amplify-pianopal-main-201102-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-pianopal-main-201102-deployment",
+      "UnauthRoleName": "amplify-pianopal-main-201102-unauthRole",
+      "StackName": "amplify-pianopal-main-201102",
+      "StackId": "arn:aws:cloudformation:us-east-1:045671846963:stack/amplify-pianopal-main-201102/59084b10-b90a-11ec-b8f8-0e8d198ac6c5",
+      "AmplifyAppId": "drqfu8u4orx2f"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "drqfu8u4orx2f",
+          "type": "cicd"
+        }
+      },
+      "auth": {
+        "pianopal71979935": {}
+      }
+    }
+  },
   "dev": {
     "awscloudformation": {
       "AuthRoleName": "amplify-pianopal-dev-111756-authRole",

@@ -24,17 +24,15 @@ class GetStarted extends React.Component {
         this.confirmSignUp = this.confirmSignUp.bind(this);
         this.onChange = this.onChange.bind(this);
         this.state = {
-            formState: initialFormState
+            formState: initialFormState,
         };
         this.state.formState.formType = props.formType;
+        // console.log("props: ", props);
     }
 
     onChange(e) {
         e.persist();
-        // console.log(e.target.name);
-        // console.log(e.target.value);
         this.setState({ formState: { ...this.state.formState, [e.target.name]: e.target.value } });
-        // console.log(this.state.formState);
     }
 
     async signUp(e) {
@@ -48,12 +46,11 @@ class GetStarted extends React.Component {
                     email
                 }
             });
-            console.log(user);
+            console.log("User: ", user);
+            this.setState({ formState: { ...this.state.formState, formType: "confirmSignUp" } });
         } catch (error) {
             console.log('error signing up:', error.message);
         }
-        // await Auth.signUp({ username, password, attributes: { email } });
-        this.setState({ formState: { ...this.state.formState, formType: "confirmSignUp" } });
     }
 
     async confirmSignUp(e) {
@@ -61,12 +58,11 @@ class GetStarted extends React.Component {
         const { username, authCode } = this.state.formState;
         try {
             const { user } = await Auth.confirmSignUp(username, authCode);
-            console.log(user);
+            console.log("User: ", user);
+            this.setState({ formState: { ...this.state.formState, formType: "signIn" } });
         } catch (error) {
             console.log('error signing up:', error.message);
         }
-
-        this.setState({ formState: { ...this.state.formState, formType: "signIn" } });
     }
 
     async signIn(e) {
@@ -74,15 +70,17 @@ class GetStarted extends React.Component {
         const { username, password } = this.state.formState;
         try {
             const { user } = await Auth.signIn(username, password);
-            console.log(user);
+            console.log("User: ", user);
+            this.props.setToken(username);
+            this.setState({ formState: { ...this.state.formState, formType: "signedIn" } });
+
         } catch (error) {
             console.log('error signing up:', error.message);
         }
-
-        this.setState({ formState: { ...this.state.formState, formType: "signedIn" } });
     }
 
     render() {
+        // const { navigation } = this.props;
         return (
             <div >
                 <Container fluid className='jumbotron heading'>
@@ -143,7 +141,7 @@ class GetStarted extends React.Component {
                         }
                         {
                             this.state.formState.formType === 'signedIn' && (
-                                <h1> Hello {this.state.formState.username}! </h1>
+                                <h1> Hello {this.props.getToken()}! </h1>
                             )
                         }
                     </div>
@@ -154,3 +152,7 @@ class GetStarted extends React.Component {
 }
 
 export default GetStarted;
+// export default function (props) {
+//     const navigation = useNavigation();
+//     return <GetStarted {...props} navigation={navigation} />;
+// }

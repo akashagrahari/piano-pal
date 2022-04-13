@@ -45,7 +45,7 @@ class Homepage extends React.Component {
                             <div className='col-lg-4'>
                                 <BiFileFind size={80} />
                                 <div className='how-to-text'>
-                                    <h4 className='text-muted'>Find a MIDI file from sources like <a href='https://freemidi.org/' target='_blank'>FreeMidi</a> </h4>
+                                    <h4 className='text-muted'>Find { } a MIDI file from sources like <a href='https://freemidi.org/' target='_blank'>FreeMidi</a> </h4>
                                 </div>
                             </div>
                             <div className='col-lg-4'>

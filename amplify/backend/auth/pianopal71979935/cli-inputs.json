@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "pianopald6bf76db_identitypool_d6bf76db",
+    "identityPoolName": "pianopal71979935_identitypool_71979935",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "pianopd6bf76db",
-    "userPoolName": "pianopald6bf76db_userpool_d6bf76db",
+    "resourceNameTruncated": "pianop71979935",
+    "userPoolName": "pianopal71979935_userpool_71979935",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -31,10 +31,10 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "pianopd6bf76db_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "pianop71979935_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "d6bf76db",
-    "resourceName": "pianopald6bf76db",
+    "sharedId": "71979935",
+    "resourceName": "pianopal71979935",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "default",
     "userPoolGroupList": [],

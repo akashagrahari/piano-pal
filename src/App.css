@@ -70,7 +70,8 @@
 }
 
 .header-button {
-  margin-left: 1%;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .form-get-started {

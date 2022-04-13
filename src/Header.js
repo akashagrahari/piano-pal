@@ -49,8 +49,23 @@ class Header extends React.Component {
                             />
                             <Button variant="outline-light">Search</Button>
                         </Form> */}
-                        <Button variant="outline-light header-button" href='/sign-in'>Sign in</Button>
-                        <Button variant="outline-light header-button" href='/sign-up'>Sign up</Button>
+                        {
+                            this.props.signedIn ?
+                                <Button variant="outline-light header-button" onClick={this.props.logout}>Sign out </Button> :
+                                <div>
+                                    <Button variant="outline-light header-button" href='/sign-in'>Sign in </Button>
+                                    <Button variant="outline-light header-button" href='/sign-up'>Sign up</Button>
+                                </div>
+                        }
+                        {/* {
+                            this.props.getToken() &&
+                            <Button variant="outline-light header-button" href=''>Sign out </Button>
+                        }
+                        {
+                            !this.props.getToken() &&
+                            <Button variant="outline-light header-button" href='/sign-in'>Sign in </Button>
+                            <Button variant="outline-light header-button" href='/sign-up'>Sign up</Button>
+                        } */}
                         {/* <Button variant="outline-light">Search</Button> */}
                     </Navbar.Collapse>
                 </Container>
