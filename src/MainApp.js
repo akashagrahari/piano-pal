@@ -6,19 +6,54 @@ import {
 } from 'react-bootstrap'
 
 
-class MainApp extends React.Component {
+function MainApp(props) {
 
-    constructor(props) {
-        super(props);
-    }
+    return (
+        <div class='piano-wrapper' >
+            {/* <p>Main App {props.getToken()}</p> */}
+            <ul id="piano">
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
 
 
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
 
-    render() {
-        return (
-            <p>Main App</p>
-        )
-    };
-}
+
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+
+
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div><div class="black"></div></li>
+                <li><div class="white"></div></li>
+            </ul>
+        </div>
+    )
+};
+
 
 export default MainApp;

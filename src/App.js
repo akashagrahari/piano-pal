@@ -1,9 +1,12 @@
 import './App.css';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import Homepage from './Homepage';
 import PageWrapper from './PageWrapper';
 
+import {
+  Container,
+} from 'react-bootstrap'
 import {
   BrowserRouter,
   Routes,
@@ -11,108 +14,98 @@ import {
 } from "react-router-dom";
 import GetStarted from './GetStarted';
 import { Auth } from 'aws-amplify';
-import { useNavigation } from 'react-router-dom';
+import MainApp from './MainApp';
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      formType: '',
-      signedIn: false,
-    }
-    this.authenticate();
-    if (this.getToken()) {
-      this.state.signedIn = true;
-    }
-  }
+function App() {
+  const [formType, updateFormType] = useState('');
+  const [signedIn, updateSignedIn] = useState(false);
 
-  getFormType() {
-    return sessionStorage.getItem('formType');
-  }
+  useEffect(() => {
+    checkLoginStatus();
+  });
 
-  updateFormType() {
-    if (this.getToken()) {
-      sessionStorage.setItem('formType', 'signedIn');
-    }
-  }
 
-  setToken(tokenString) {
+  function setToken(tokenString) {
     sessionStorage.setItem('token', tokenString);
   }
 
-  getToken() {
-    const tokenString = sessionStorage.getItem('token');
-    return tokenString;
+  function getToken() {
+    return sessionStorage.getItem('token');
   }
 
-  async logout() {
-    try {
-      await Auth.signOut({ global: true });
-      sessionStorage.clear();
-      this.setState({ signedIn: false });
-      this.forceUpdate();
-    } catch (error) {
-      console.log('error signing out: ', error);
-    }
-  }
-
-  authenticate() {
+  function checkLoginStatus() {
     Auth.currentAuthenticatedUser()
       .then(user => {
         console.log('user is authenticated: ', user);
-        this.setToken(user.username);
+        setToken(user.username);
+        updateSignedIn(true);
+        updateFormType('signedIn');
       })
       .catch(err => {
         console.log(err);
       });;
   }
 
-  render() {
-    return (
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={
-            <PageWrapper
-              signedIn={this.state.signedIn}
-              getToken={this.getToken}
-              logout={this.logout}
-              page={
-                <Homepage></Homepage>
-              }>
-            </PageWrapper>
-          }>
-          </Route>
-          <Route path='/sign-in' element={
-            <PageWrapper
-              signedIn={this.state.signedIn}
-              getToken={this.getToken}
-              logout={this.logout}
-              page={
-                <GetStarted formType={this.getFormType() || 'signIn'}
-                  setToken={this.setToken} getToken={this.getToken}
-                ></GetStarted>
-              }>
-            </PageWrapper>
-          }>
-          </Route>
-          <Route path='/sign-up' element={
-            <PageWrapper
-              signedIn={this.state.signedIn}
-              getToken={this.getToken}
-              logout={this.logout}
-              page={
-                <GetStarted formType={this.getFormType() || 'signUp'}
-                  setToken={this.setToken} getToken={this.getToken}
-                ></GetStarted>
-              }>
-            </PageWrapper>
-          }>
-          </Route>
-        </Routes>
-      </BrowserRouter >
 
-    );
-  }
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={
+          <PageWrapper
+            signedIn={signedIn}
+            getToken={getToken}
+            updateSignedIn={updateSignedIn}
+            page={
+              <Homepage getToken={getToken}></Homepage>
+            }>
+          </PageWrapper>
+        }>
+        </Route>
+        <Route path='/sign-in' element={
+          <PageWrapper
+            signedIn={signedIn}
+            getToken={getToken}
+            updateSignedIn={updateSignedIn}
+            page={
+              <GetStarted formType={formType || 'signIn'}
+                setToken={setToken} getToken={getToken}
+                updateSignedIn={updateSignedIn}
+              ></GetStarted>
+            }>
+          </PageWrapper>
+        }>
+        </Route>
+        <Route path='/sign-up' element={
+          <PageWrapper
+            signedIn={signedIn}
+            getToken={getToken}
+            updateSignedIn={updateSignedIn}
+            page={
+              <GetStarted formType={formType || 'signUp'}
+                setToken={setToken} getToken={getToken}
+                updateSignedIn={updateSignedIn}
+              ></GetStarted>
+            }>
+          </PageWrapper>
+        }>
+        </Route>
+        {signedIn &&
+          <Route path='/main' element={
+            <PageWrapper
+              signedIn={signedIn}
+              getToken={getToken}
+              updateSignedIn={updateSignedIn}
+              page={
+                <MainApp getToken={getToken}></MainApp>
+              }>
+            </PageWrapper>
+          }>
+          </Route>
+        }
+
+      </Routes>
+    </BrowserRouter >
+  );
 }
 
 

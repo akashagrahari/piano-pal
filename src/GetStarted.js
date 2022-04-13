@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Form,
     Button,
     Container,
 } from 'react-bootstrap'
 import { Auth, Hub } from 'aws-amplify';
+import { useNavigate } from 'react-router-dom';
 
 const initialFormState = {
     username: '',
@@ -14,30 +15,26 @@ const initialFormState = {
     formType: '',
 };
 
-class GetStarted extends React.Component {
+function GetStarted(props) {
+    const navigate = useNavigate();
+    initialFormState.formType = props.formType;
+    const [formState, updateFormState] = useState(initialFormState);
 
-    constructor(props) {
-        super(props);
-        // this.handleSubmit = this.handleSubmit.bind(this);
-        this.signIn = this.signIn.bind(this);
-        this.signUp = this.signUp.bind(this);
-        this.confirmSignUp = this.confirmSignUp.bind(this);
-        this.onChange = this.onChange.bind(this);
-        this.state = {
-            formState: initialFormState,
-        };
-        this.state.formState.formType = props.formType;
-        // console.log("props: ", props);
-    }
+    useEffect(() => {
+        if (props.getToken()) {
+            navigate('/main');
+        }
+    });
 
-    onChange(e) {
+    function onChange(e) {
         e.persist();
-        this.setState({ formState: { ...this.state.formState, [e.target.name]: e.target.value } });
+        updateFormState(() => ({ ...formState, [e.target.name]: e.target.value }));
     }
+    const { formType } = formState;
 
-    async signUp(e) {
+    async function signUp(e) {
         e.preventDefault();
-        const { username, email, password } = this.state.formState;
+        const { username, email, password } = formState;
         try {
             const { user } = await Auth.signUp({
                 username,
@@ -47,112 +44,103 @@ class GetStarted extends React.Component {
                 }
             });
             console.log("User: ", user);
-            this.setState({ formState: { ...this.state.formState, formType: "confirmSignUp" } });
+            updateFormState(() => ({ ...formState, formType: "confirmSignUp" }));
         } catch (error) {
             console.log('error signing up:', error.message);
         }
     }
 
-    async confirmSignUp(e) {
+    async function confirmSignUp(e) {
         e.preventDefault();
-        const { username, authCode } = this.state.formState;
+        const { username, authCode } = formState;
         try {
             const { user } = await Auth.confirmSignUp(username, authCode);
             console.log("User: ", user);
-            this.setState({ formState: { ...this.state.formState, formType: "signIn" } });
+            updateFormState(() => ({ ...formState, formType: "signIn" }));
         } catch (error) {
             console.log('error signing up:', error.message);
         }
     }
 
-    async signIn(e) {
+    async function signIn(e) {
         e.preventDefault();
-        const { username, password } = this.state.formState;
+        const { username, password } = formState;
         try {
             const { user } = await Auth.signIn(username, password);
             console.log("User: ", user);
-            this.props.setToken(username);
-            this.setState({ formState: { ...this.state.formState, formType: "signedIn" } });
-
+            props.updateSignedIn(true);
+            props.setToken(username);
+            navigate('/main');
+            // updateFormState(() => ({ ...formState, formType: "signedIn" }));
         } catch (error) {
             console.log('error signing up:', error.message);
         }
     }
 
-    render() {
-        // const { navigation } = this.props;
-        return (
-            <div >
-                <Container fluid className='jumbotron heading'>
-                    <div className='container-fluid '>
-                        {
-                            this.state.formState.formType === 'signUp' && (
-                                <Form className='form-get-started' onSubmit={this.signUp}>
-                                    <h1 className="jumbotron-heading">Sign Up</h1>
-                                    <Form.Group className="mb-3" controlId="formBasicUsername">
-                                        <Form.Label>Username</Form.Label>
-                                        <Form.Control type="username" placeholder="Username" name="username" onChange={this.onChange} />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                                        <Form.Label>Password</Form.Label>
-                                        <Form.Control type="password" placeholder="Password" name="password" onChange={this.onChange} />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                                        <Form.Label>Email address</Form.Label>
-                                        <Form.Control type="email" placeholder="Email" name="email" onChange={this.onChange} />
-                                    </Form.Group>
-                                    <Button variant="outline-light sign-in-up" type="submit">
-                                        Submit
-                                    </Button>
-                                </Form>
-                            )
-                        }
-                        {
-                            this.state.formState.formType === 'signIn' && (
-                                <Form className='form-get-started' onSubmit={this.signIn}>
-                                    <h1 className="jumbotron-heading">Sign In</h1>
-                                    <Form.Group className="mb-3" controlId="formBasicUsername">
-                                        <Form.Label>Username</Form.Label>
-                                        <Form.Control type="username" placeholder="Username" name="username" onChange={this.onChange} />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                                        <Form.Label>Password</Form.Label>
-                                        <Form.Control type="password" placeholder="Password" name="password" onChange={this.onChange} />
-                                    </Form.Group>
-                                    <Button variant="outline-light sign-in-up" type="submit">
-                                        Submit
-                                    </Button>
-                                </Form>
-                            )
-                        }
-                        {
-                            this.state.formState.formType === 'confirmSignUp' && (
-                                <Form className='form-get-started' onSubmit={this.confirmSignUp}>
-                                    <h1 className="jumbotron-heading">Confirm Sign Up</h1>
-                                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                                        <Form.Label>Auth Code</Form.Label>
-                                        <Form.Control type="password" placeholder="Confirmation Code" name="authCode" onChange={this.onChange} />
-                                    </Form.Group>
-                                    <Button variant="outline-light sign-in-up" type="submit">
-                                        Submit
-                                    </Button>
-                                </Form>
-                            )
-                        }
-                        {
-                            this.state.formState.formType === 'signedIn' && (
-                                <h1> Hello {this.props.getToken()}! </h1>
-                            )
-                        }
-                    </div>
-                </Container>
-            </div>
-        )
-    }
+    return (
+        <div >
+            <Container fluid className='jumbotron heading'>
+
+                <div className='container-fluid '>
+                    {
+                        formType === 'signUp' && (
+                            <Form className='form-get-started' onSubmit={signUp}>
+                                <h1 className="jumbotron-heading">Sign Up</h1>
+                                <Form.Group className="mb-3" controlId="formBasicUsername">
+                                    <Form.Label>Username</Form.Label>
+                                    <Form.Control type="username" placeholder="Username" name="username" onChange={onChange} />
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formBasicPassword">
+                                    <Form.Label>Password</Form.Label>
+                                    <Form.Control type="password" placeholder="Password" name="password" onChange={onChange} />
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formBasicEmail">
+                                    <Form.Label>Email address</Form.Label>
+                                    <Form.Control type="email" placeholder="Email" name="email" onChange={onChange} />
+                                </Form.Group>
+                                <Button variant="outline-light sign-in-up" type="submit">
+                                    Submit
+                                </Button>
+                            </Form>
+                        )
+                    }
+                    {
+                        formType === 'signIn' && (
+                            <Form className='form-get-started' onSubmit={signIn}>
+                                <h1 className="jumbotron-heading">Sign In</h1>
+                                <Form.Group className="mb-3" controlId="formBasicUsername">
+                                    <Form.Label>Username</Form.Label>
+                                    <Form.Control type="username" placeholder="Username" name="username" onChange={onChange} />
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formBasicPassword">
+                                    <Form.Label>Password</Form.Label>
+                                    <Form.Control type="password" placeholder="Password" name="password" onChange={onChange} />
+                                </Form.Group>
+                                <Button variant="outline-light sign-in-up" type="submit">
+                                    Submit
+                                </Button>
+                            </Form>
+                        )
+                    }
+                    {
+                        formType === 'confirmSignUp' && (
+                            <Form className='form-get-started' onSubmit={this.confirmSignUp}>
+                                <h1 className="jumbotron-heading">Confirm Sign Up</h1>
+                                <Form.Group className="mb-3" controlId="formBasicPassword">
+                                    <Form.Label>Auth Code</Form.Label>
+                                    <Form.Control type="password" placeholder="Confirmation Code" name="authCode" onChange={onChange} />
+                                </Form.Group>
+                                <Button variant="outline-light sign-in-up" type="submit">
+                                    Submit
+                                </Button>
+                            </Form>
+                        )
+                    }
+                </div>
+            </Container>
+        </div>
+    )
 }
 
+
 export default GetStarted;
-// export default function (props) {
-//     const navigation = useNavigation();
-//     return <GetStarted {...props} navigation={navigation} />;
-// }
