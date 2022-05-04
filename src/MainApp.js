@@ -7,186 +7,87 @@ import {
     ProgressBar,
     Modal,
     ListGroup,
-    ListGroupItem
+    ListGroupItem,
 } from 'react-bootstrap'
 import Sketch from "react-p5";
 import * as Tone from 'tone'
 import { PianoPlayer } from './PianoPlayer';
+import * as AWS from 'aws-sdk';
+import { ConfigurationOptions } from 'aws-sdk';
+import { API, graphqlOperation } from "aws-amplify";
+import { createTrack } from './graphql/mutations';
+import { useNavigate } from 'react-router-dom';
+
+// AWS.config.update({ region: 'us-east-1' });
+const docClient = new AWS.DynamoDB.DocumentClient();
+
 
 const { Midi } = require('@tonejs/midi');
 
 
 function MainApp(props) {
-    // const [uploadFile, setUploadFile] = useState();
     const [player, setPlayer] = useState();
-    // const [playing, setPlaying] = useState();
+    const [intro, setIntro] = useState();
     const [showTracks, setShowTracks] = useState();
     const [tracks, setTracks] = useState();
     const [isTrackSelected, setIsTrackSelected] = useState();
-    // const [currentMidi, setCurrentMidi] = useState();
-    // const [tracks, setTracks] = useState();
-    // const [selectedTrack, setSelectedTrack] = useState();
-    // const [sampler, setSampler] = useState();
-
-    // function initializeSampler() {
-    //     let s = new Tone.Sampler({
-    //         urls: {
-    //             "C2": "C2.mp3",
-    //             "D#2": "Ds2.mp3",
-    //             "F#2": "Fs2.mp3",
-    //             "A2": "A2.mp3",
-    //             "C3": "C3.mp3",
-    //             "D#3": "Ds3.mp3",
-    //             "F#3": "Fs3.mp3",
-    //             "A3": "A3.mp3",
-    //             "C4": "C4.mp3",
-    //             "D#4": "Ds4.mp3",
-    //             "F#4": "Fs4.mp3",
-    //             "A4": "A4.mp3",
-    //             "C5": "C5.mp3",
-    //             "D#5": "Ds5.mp3",
-    //             "F#5": "Fs5.mp3",
-    //             "A5": "A5.mp3",
-    //             "C6": "C6.mp3",
-    //             "D#6": "Ds6.mp3",
-    //             "F#6": "Fs6.mp3",
-    //             "A6": "A6.mp3"
-    //         },
-    //         release: 1,
-    //         baseUrl: "https://tonejs.github.io/audio/salamander/",
-    //     }).toDestination();
-    //     setSampler(s);
-    // }
+    const navigate = useNavigate();
+    // const [songs, setSongs] = useState();
 
     useEffect(() => {
         if (!player) {
             let pianoPlayer = new PianoPlayer();
             pianoPlayer.initializeSampler();
-            pianoPlayer.initializeTracks();
-            // pianoPlayer.initializeTrackGrid();
             setPlayer(pianoPlayer);
-            // console.log("piano player: ", pianoPlayer);
-            // setTracks(pianoPlayer.getTracks());
         }
 
         if (showTracks && !tracks) {
             console.log("Tracks: ", player.tracks);
-            // let availableTracks = player.tracks;
-            // console.log("Available Tracks: ", availableTracks);
             setTracks(player.tracks);
         }
 
         if (isTrackSelected) {
             player.initializeTrackGrid();
         }
-        // if (!sampler) {
-        //     initializeSampler();
-        // }
-        // const fetchMidi = async () => {
-        //     try {
-        //         let midi = await Midi.fromUrl("https://akashagrahari.github.io/public/Imagine.mid");
-        //         console.log("duration: " + midi.duration);
-        //         setCurrentMidi(midi);
-        //         let availableTracks = [];
-        //         midi.tracks.forEach((track) => {
-        //             availableTracks.push(track.name);
-        //         });
-        //         setTracks(availableTracks);
-        //         setSelectedTrack(midi.tracks[0]);
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
-
-        // if (!currentMidi) {
-        //     fetchMidi();
-        // }
-
-        // console.log("Playing: ", playing);
-        // console.log("CurrentMidi: ", currentMidi);
-        // if (playing && currentMidi && sampler) {
-        //     playTrack();
-        // }
     });
 
-    // function stopTrack() {
-    //     Tone.loaded().then(() => {
-    //         // sampler.dispose();
-    //         console.log("pls stop");
-    //         Tone.Transport.stop();
-    //     });
-    // }
-
-    // function findMinDiff(arr, n) {
-    //     // Initialize difference as infinite
-    //     let diff = Number.MAX_VALUE;
-
-    //     // Find the min diff by comparing difference
-    //     // of all possible pairs in given array
-    //     for (let i = 0; i < n - 1; i++)
-    //         for (let j = i + 1; j < n; j++)
-    //             if (Math.abs((arr[i] - arr[j])) < diff)
-    //                 diff = Math.abs((arr[i] - arr[j]));
-
-    //     // Return min diff   
-    //     return diff;
-    // }
-
-    // function playTrack() {
-    //     console.log("pls play");
-    //     // const now = Tone.now();
-    //     // let track = currentMidi.tracks[0];
-    //     let minTick = Number.MAX_VALUE;
-    //     let ticksSet = new Set();
-    //     selectedTrack.notes.forEach((note) => {
-    //         ticksSet.add(note.ticks);
-    //         if (note.ticks < minTick) {
-    //             minTick = note.ticks;
-
-    //         }
-    //     });
-    //     console.log("Minimum Ticks: ", minTick);
-    //     console.log("Ticks Set: ", ticksSet);
-    //     console.log("Ticks Set min diff: ", findMinDiff(ticksSet, ticksSet.size).toFixed(2));
-    //     Tone.Transport.scheduleRepeat(time => {
-    //         Tone.loaded().then(() => {
-    //             // sampler.triggerAttackRelease(["C2"], 0.1);
-    //             // track.notes.forEach((note) => {
-    //             //     sampler.triggerAttackRelease(
-    //             //         note.name,
-    //             //         note.duration,
-    //             //         note.time + time,
-    //             //         note.velocity
-    //             //     );
-    //             // });
-    //         });
-    //     }, '192i');
-    //     Tone.Transport.start();
-
+    // async function fetchTracks() {
+    //     try {
+    //         const tracksData = await API.graphql(graphqlOperation(listTracks))
+    //         const trackList = tracksData.data.listTracks.items;
+    //         console.log("songList: ", trackList);
+    //         setSongs(trackList);
+    //     } catch (error) {
+    //         console.log("error: ", error);
+    //     }
     // }
 
     function handleStop(e) {
-        // setPlaying(false);
-        // stopTrack();
-        // initializeSampler();
+        player.stop();
     }
 
     function handlePlay(e) {
-        // setPlaying(true);
+        player.play();
     }
 
-    function setTrackList() {
-        // var tracksModal = document.getElementById('tracks-modal');
-        // tracksModal.innerHTML = 'Blah';
-        // console.log("Tracks modal:", tracksModal);
+    function handlePause(e) {
+        player.pause();
     }
 
-    function handleShowTracks() {
-        setShowTracks(true);
-    }
+    // function handleShowTracks() {
+    //     setShowTracks(true);
+    // }
 
     function handleCloseTracks() {
         setShowTracks(false);
+    }
+
+    function handleCloseMode() {
+        setIntro(true);
+    }
+
+    function handleShowMode() {
+        setIntro(false);
     }
 
     function handleFileUpload(e) {
@@ -226,6 +127,67 @@ function MainApp(props) {
         // })
     }
 
+    function devToolTip(track) {
+        alert("Feature in development. Sorry for inconvenience");
+        // $('[data-toggle="tooltip"]').tooltip();
+    }
+
+    function parseFile(file) {
+        let midi;
+        let midiString;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            midi = new Midi(e.target.result);
+            // document.querySelector(
+            //     "#ResultsText"
+            // ).value = JSON.stringify(midi, undefined, 2);
+            midiString = JSON.stringify(midi);
+            // document
+            // .querySelector("tone-play-toggle")
+            // .removeAttribute("disabled");
+            // currentMidi = midi;
+            // console.log("midi: ", midi);
+            player.initializeTracks(midi);
+            setIntro(true);
+            setShowTracks(true);
+        };
+        reader.readAsArrayBuffer(file);
+
+        const uploadFile = async () => {
+            try {
+                const song = {
+                    artist: "placeholder_artist",
+                    midi: midiString,
+                    title: file.name.split('.')[0],
+                    type: "placeholder_type",
+                    id: "123",
+                }
+                const response = await API.graphql(graphqlOperation(createTrack, { input: song }));
+                // const response = await API.graphql(graphqlOperation(createTrack, { input: song }))
+                console.log("response: ", response);
+            } catch (error) {
+                console.log("error: ", error);
+            }
+        }
+
+        uploadFile();
+
+    }
+
+    function uploadFile(event) {
+        console.log(event.target.files);
+        parseFile(event.target.files[0]);
+
+    }
+
+    function browseFile() {
+        let inputFile = document.getElementById('browse-midi').click();
+    }
+
+    function showDirectory() {
+        navigate('/directory');
+    }
+
     return (
         <div>
             <Modal show={showTracks} onHide={handleCloseTracks}>
@@ -238,11 +200,12 @@ function MainApp(props) {
                         {tracks && Object.keys(tracks).map(key =>
                             <ListGroupItem>
                                 <div className="row track-list">
-                                    <div className="col-sm-10">
-                                        <h3>{tracks[key].name}</h3>
+                                    <div className="col-sm-6">
+                                        <p className='track-text'>{tracks[key].name}</p>
                                     </div>
-                                    <div className='col-sm-2'>
-                                        <Button variant="primary" onClick={selectTrack} id={key}  ><i className="bi bi-check2 player-icon" id={key}></i></Button>
+                                    <div className='col-sm-6'>
+                                        <Button variant="outline-dark header-button player-button" onClick={devToolTip} data-toggle="preview-tooltip" data-placement="top" title="Feature in development" id={key}  >Preview </Button>
+                                        <Button variant="outline-dark header-button player-button" onClick={selectTrack} id={key}  >Select</Button>
                                     </div>
                                 </div>
                             </ListGroupItem>
@@ -250,16 +213,54 @@ function MainApp(props) {
                     </ListGroup>
                 </Modal.Body>
             </Modal>
+            <Modal show={!intro} onHide={handleCloseMode}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Select Mode</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className='row'>
+                        <div className='col-sm-6 button-wrapper' >
+                            <input type="file" onChange={uploadFile} className="file-upload" id='browse-midi' />
+                            <Button variant="outline-dark header-button" onClick={browseFile}>Upload MIDI  <i className="bi bi-upload "></i></Button>
+                        </div>
+                        <div className='col-sm-6 button-wrapper' >
+                            <Button variant="outline-dark header-button" onClick={showDirectory}>Browse Library  <i className="bi bi-search "></i></Button>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-sm-6 button-wrapper' >
+                            <p className='help-text'>Upload a MIDI file from sources like <a href='https://freemidi.org/' target='_blank'>FreeMidi</a></p>
+                        </div>
+                        <div className='col-sm-6 button-wrapper' >
+                            <p className='help-text'>Browse MIDI files from the community library</p>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-sm-12 button-wrapper' >
+                            <Button variant="outline-dark header-button" onClick={handleCloseMode}>Play Piano  <i className="bi bi-music-note"></i></Button>
+                        </div>
+                    </div>
+                    <div className='row'>
+                        <div className='col-sm-12 button-wrapper' >
+                            <p className='help-text'>Play around with the virtual piano</p>
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
 
-            <div className='piano-roll'>
-
-                {/* <h1> Blah</h1>
-                <h1> Blah</h1>
-                <h1> Blah</h1>
-                <i className="bi bi-activity"></i> */}
+            <div className='piano-roll' id='piano-roll'>
+                <canvas id='piano-roll-canvas'></canvas>
             </div>
             <div className='piano-wrapper' >
                 <ul id="piano">
+                    <li><div className="white" id='C1' onMouseDown={playNote}></div></li>
+                    <li><div className="white" id='D1' onMouseDown={playNote}></div><div className="black" id='Db1' onMouseDown={playNote}></div></li>
+                    <li><div className="white" id='E1' onMouseDown={playNote}></div><div className="black" id='Eb1' onMouseDown={playNote}></div></li>
+                    <li><div className="white" id='F1' onMouseDown={playNote}></div></li>
+                    <li><div className="white" id='G1' onMouseDown={playNote}></div><div className="black" id='Gb1' onMouseDown={playNote}></div></li>
+                    <li><div className="white" id='A1' onMouseDown={playNote}></div><div className="black" id='Ab1' onMouseDown={playNote}></div></li>
+                    <li><div className="white" id='B1' onMouseDown={playNote}></div><div className="black" id='Bb1' onMouseDown={playNote}></div></li>
+
                     <li><div className="white" id='C2' onMouseDown={playNote}></div></li>
                     <li><div className="white" id='D2' onMouseDown={playNote}></div><div className="black" id='Db2' onMouseDown={playNote}></div></li>
                     <li><div className="white" id='E2' onMouseDown={playNote}></div><div className="black" id='Eb2' onMouseDown={playNote}></div></li>
@@ -305,14 +306,14 @@ function MainApp(props) {
                     {/* <span class="col-sm-3">Some inline element</span> */}
                     <div className="col-sm-2">
                         <Button variant="outline-light header-button player-button" onClick={handlePlay}><i className="bi bi-play-fill player-icon"></i></Button>
-                        <Button variant="outline-light header-button player-button" ><i className="bi bi-pause-fill player-icon"></i></Button>
+                        <Button variant="outline-light header-button player-button" onClick={handlePause} ><i className="bi bi-pause-fill player-icon"></i></Button>
                         <Button variant="outline-light header-button player-button" onClick={handleStop}><i className="bi bi-stop-fill player-icon"></i></Button>
                     </div>
                     <div className="progress col-sm-7">
-                        <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progress-bar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <div className="col-sm-2 upload">
-                        <Button variant="outline-light header-button" onClick={handleShowTracks}>Upload MIDI  <i className="bi bi-upload player-icon"></i></Button>
+                        <Button variant="outline-light header-button" onClick={handleShowMode}>Learn a song!</Button>
                     </div>
                 </div>
 

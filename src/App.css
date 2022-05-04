@@ -105,7 +105,7 @@ ul#piano {
 
 ul#piano li {
   list-style: none;
-  width: 3%;
+  width: 2.5%;
   height: 100%;
   float: left;
   position: relative;
@@ -114,7 +114,7 @@ ul#piano li {
 
 /* white */
 ul#piano li .white {
-  height: 14.2em;
+  height: 13.2em;
   width: 100%;
   background: #fff;
   border: 1px solid #ccc;
@@ -123,17 +123,25 @@ ul#piano li .white {
 
 ul#piano li .white:active {
   position: relative;
+  background: rgb(101, 205, 27);
   top: 2px;
-  height: 13.8em;
+  height: 12.8em;
+}
+
+ul#piano li .white.active {
+  position: relative;
+  background: rgb(101, 205, 27);
+  top: 2px;
+  height: 12.8em;
 }
 
 /* Black */
 ul#piano li .black {
   position: absolute;
   top: 0px;
-  left: -0.7em;
+  left: -0.5em;
   width: 45%;
-  height: 7.5em;
+  height: 7.0em;
   background: #333;
   z-index: 10;
   border-width: 1px 2px 7px;
@@ -144,7 +152,14 @@ ul#piano li .black {
 
 ul#piano li .black:active {
   border-bottom-width: 2px;
-  height: 7.4em;
+  background: rgb(101, 205, 27);
+  height: 7.0em;
+}
+
+ul#piano li .black.active {
+  border-bottom-width: 2px;
+  background: rgb(101, 205, 27);
+  height: 7.0em;
 }
 
 .piano-wrapper {
@@ -160,9 +175,12 @@ ul#piano li .black:active {
 }
 
 .piano-roll {
-  background-color: grey;
+  background-color: rgb(55, 55, 55);
+  /* opacity: 0.1; */
   height: 50vh;
   margin-top: 1.9em;
+  margin-left: 2em;
+  margin-right: 2em;
 }
 
 .control-button {
@@ -171,6 +189,12 @@ ul#piano li .black:active {
   margin: 0;
   font-size: 550px;
 
+}
+
+
+canvas {
+  width: 100%;
+  height: 50vh;
 }
 
 .player {
@@ -190,7 +214,7 @@ ul#piano li .black:active {
 }
 
 .player .progress-bar {
-  width: 50%;
+  width: 0%;
 }
 
 .row .progress {
@@ -207,4 +231,32 @@ ul#piano li .black:active {
   /* flex-direction: column; */
   vertical-align: center;
   /* justify-content: center; */
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5%;
+  padding-top: 5%;
+}
+
+.help-text {
+  text-align: center;
+}
+
+.track-text {
+  font-size: x-large;
+}
+
+.file-upload {
+  display: none;
+  /*  */
+}
+
+.back-button {
+  /* margin-top: 10%; */
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  margin-bottom: 1%;
 }

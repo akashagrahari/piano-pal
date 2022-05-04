@@ -16,6 +16,7 @@ import {
 import GetStarted from './GetStarted';
 import { Auth } from 'aws-amplify';
 import MainApp from './MainApp';
+import Directory from './Directory';
 
 function App() {
   const [formType, updateFormType] = useState('');
@@ -37,7 +38,6 @@ function App() {
   function checkLoginStatus() {
     Auth.currentAuthenticatedUser()
       .then(user => {
-        console.log('user is authenticated: ', user);
         setToken(user.username);
         updateSignedIn(true);
         updateFormType('signedIn');
@@ -103,7 +103,21 @@ function App() {
           }>
           </Route>
         }
+        {
+          signedIn &&
+          <Route path='/directory' element={
+            <PageWrapper
+              signedIn={signedIn}
+              getToken={getToken}
+              updateSignedIn={updateSignedIn}
+              page={
+                <Directory getToken={getToken}></Directory>
+              }>
+            </PageWrapper>
+          }>
 
+          </Route>
+        }
       </Routes>
     </BrowserRouter >
   );
