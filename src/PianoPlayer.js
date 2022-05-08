@@ -17,8 +17,13 @@ export function PianoPlayer() {
     const trackGrid = [];
     let cursor = 0;
     let isPlaying = false;
-    let posY = 0;
+    let playerState = 'stop';
+    // let posY = 0;
     var stopId;
+
+    this.getPlayerState = () => {
+        return playerState;
+    }
 
     this.initializeSampler = () => {
 
@@ -272,7 +277,7 @@ export function PianoPlayer() {
     this.play = () => {
         console.log("Play");
         let trackDuration = trackGrid.length;
-        if (!isPlaying) {
+        if (playerState == 'stop') {
             Tone.loaded().then(() => {
                 Tone.Transport.scheduleRepeat(time => {
                     this.playBeat(this.sampler, time, this.ppq);
@@ -281,34 +286,44 @@ export function PianoPlayer() {
                     ++cursor;
                 }, (this.ppq + "i"));
                 Tone.Transport.start();
-                isPlaying = true;
+                // isPlaying = true;
+                playerState = 'play';
             });
-        } else {
+        } else if (playerState == 'pause') {
             Tone.Transport.start();
+            playerState = 'play';
+        } else {
+            console.log('unexpected play command: ', playerState);
         }
     }
 
     this.pause = () => {
         console.log("Pause");
-        Tone.Transport.pause();
+        if (playerState == 'play') {
+            Tone.Transport.pause();
+            playerState = 'pause';
+        } else {
+            console.log('unexpected pause command: ', playerState);
+        }
     }
 
     this.stop = () => {
         console.log("Stop");
-        isPlaying = false;
+        // isPlaying = false;
+        playerState = 'stop';
         Tone.Transport.pause();
         setTimeout(() => {
             cursor = 0;
             drawInitialPianoRoll(cursor, trackGrid, this.ppq);
             this.updateProgressBar(0, trackGrid.length);
             Tone.Transport.stop();
-            // this.initializeTrackGrid();
+            Tone.Transport.cancel(0);
         }, (60 * 1000) / this.tempo);
     }
 
     this.playNote = (key) => {
         let note = key.target.id;
-        if (!isPlaying) {
+        if (playerState != 'play') {
             Tone.loaded().then(() => {
                 this.sampler.triggerAttackRelease([note], 1);
             })

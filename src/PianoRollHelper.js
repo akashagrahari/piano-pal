@@ -1,5 +1,4 @@
 
-const speedY = 3;
 // let whiteWidthPercent = 0.0255;
 let whiteWidth;
 let blackWidth;

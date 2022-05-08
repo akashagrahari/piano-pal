@@ -8,6 +8,8 @@ import {
     Modal,
     ListGroup,
     ListGroupItem,
+    InputGroup,
+    FormControl,
 } from 'react-bootstrap'
 import Sketch from "react-p5";
 import * as Tone from 'tone'
