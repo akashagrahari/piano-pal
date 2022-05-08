@@ -201,7 +201,7 @@ function MainApp(props) {
                             <ListGroupItem>
                                 <div className="row track-list">
                                     <div className="col-sm-6">
-                                        <p className='track-text'>{tracks[key].name}</p>
+                                        <p className='track-text'>{tracks[key].instrument.name}</p>
                                     </div>
                                     <div className='col-sm-6'>
                                         <Button variant="outline-dark header-button player-button" onClick={devToolTip} data-toggle="preview-tooltip" data-placement="top" title="Feature in development" id={key}  >Preview </Button>

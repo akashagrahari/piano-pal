@@ -1,4 +1,5 @@
 import * as Tone from 'tone'
+import { animatePianoRoll, drawInitialPianoRoll } from './PianoRollHelper';
 
 const { Midi } = require('@tonejs/midi');
 
@@ -16,14 +17,8 @@ export function PianoPlayer() {
     const trackGrid = [];
     let cursor = 0;
     let isPlaying = false;
-    const whiteWidthPercent = 0.025;
-    const blackWidthPercent = 0.01125;
-    const beatLengthPercent = 0.4;
-    const speedY = 3;
     let posY = 0;
     var stopId;
-
-    // let noteLayer = []
 
     this.initializeSampler = () => {
 
@@ -58,10 +53,9 @@ export function PianoPlayer() {
     }
 
     this.initializeTracks = (midi) => {
-        console.log("Intialie Track");
+        console.log("Intialise Tracks");
         const fetchMidi = async () => {
             try {
-                // let midi = await Midi.fromUrl("https://akashagrahari.github.io/public/Imagine.mid");
                 let availableTracks = {}
                 midi.tracks.forEach(function callback(value, index) {
                     availableTracks[index + 1] = value;
@@ -83,114 +77,100 @@ export function PianoPlayer() {
         this.selectedTrack = this.tracks[trackId];
         this.currentBeat = 0;
         this.currentNotePos = 0;
-
     }
 
-    this.drawGridLines = () => {
-        let canvas = document.getElementById('piano-roll-canvas');
-        let ctx = canvas.getContext('2d');
-        let canvasHeight = canvas.height;
-        let canvasWidth = canvas.width;
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    // this.drawPianoRoll = () => {
+    //     let canvas = document.getElementById('piano-roll-canvas');
+    //     let ctx = canvas.getContext('2d');
+    //     let canvasHeight = canvas.height;
+    //     let canvasWidth = canvas.width;
+    //     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-        ctx.setLineDash([10, 8]);/*dashes are 5px and spaces are 3px*/
-        for (let i = 0; i < trackGrid.length; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, posY - (i * (beatLengthPercent * canvasHeight)));
-            ctx.lineTo(canvasWidth, posY - (i * (beatLengthPercent * canvasHeight)));
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = 'white';
-            ctx.stroke();
-        }
-        posY = posY + speedY;
-        // console.log(posY);
-        if (isPlaying) {
-            stopId = requestAnimationFrame(this.drawGridLines);
-        }
-    }
+    //     ctx.setLineDash([10, 8]);/*dashes are 5px and spaces are 3px*/
+    //     for (let i = 0; i < trackGrid.length; i++) {
+    //         ctx.beginPath();
+    //         ctx.moveTo(0, posY - (i * (beatLengthPercent * canvasHeight)));
+    //         ctx.lineTo(canvasWidth, posY - (i * (beatLengthPercent * canvasHeight)));
+    //         ctx.lineWidth = 2;
+    //         ctx.strokeStyle = '#ced4da';
+    //         ctx.stroke();
+    //     }
+    //     posY = posY + speedY;
+    //     // console.log(posY);
+    //     if (isPlaying) {
+    //         stopId = requestAnimationFrame(this.drawPianoRoll);
+    //     }
+    // }
 
-    function getPosXNote(midiValue, whiteWidth, blackWidth) {
-        // console.log(midiValue, whiteWidth, blackWidth);
-        let zeroPointMidiValue = 24;
-        let modulus = midiValue % 12;
-        let type = 'white';
-        if ([1, 3, 6, 8, 10].includes(modulus)) {
-            type = 'black';
-        }
-        let octavePosX = (Math.floor(midiValue / zeroPointMidiValue)) * (7 * whiteWidth);
-        let notePosX = octavePosX;
-        if (type == 'white') {
-            let posOnKeyBoard = Math.ceil(modulus / 2);
-            notePosX = notePosX + (posOnKeyBoard * whiteWidth);
-        } else {
-            let posOnKeyBoard = Math.floor(modulus / 2);
-            notePosX = notePosX + (posOnKeyBoard * whiteWidth) + (whiteWidth * 0.85);
-        }
-        // console.log(notePosX);
-        return notePosX;
-    }
+    // function getPosXNote(midiValue, whiteWidth, blackWidth) {
+    //     // console.log(midiValue, whiteWidth, blackWidth);
+    //     let zeroPointMidiValue = 24;
+    //     let modulus = midiValue % 12;
+    //     let type = 'white';
+    //     if ([1, 3, 6, 8, 10].includes(modulus)) {
+    //         type = 'black';
+    //     }
+    //     let octavePosX = (Math.floor(midiValue / zeroPointMidiValue)) * (7 * whiteWidth);
+    //     let notePosX = octavePosX;
+    //     if (type == 'white') {
+    //         let posOnKeyBoard = Math.ceil(modulus / 2);
+    //         notePosX = notePosX + (posOnKeyBoard * whiteWidth);
+    //     } else {
+    //         let posOnKeyBoard = Math.floor(modulus / 2);
+    //         notePosX = notePosX + (posOnKeyBoard * whiteWidth) + (whiteWidth * 0.85);
+    //     }
+    //     // console.log(notePosX);
+    //     return notePosX;
+    // }
 
-    function getPosYNote(cursor, ticks, ppq, canvasHeight) {
-        // console.log(posY, cursor, beatLengthPercent, canvasHeight, ticks, ppq);
-        let notePosY = posY - (cursor * (beatLengthPercent * canvasHeight)) - (((ticks / (4 * ppq)) - 2) * beatLengthPercent * canvasHeight);
-        return notePosY;
-    }
+    // function getPosYNote(cursor, ticks, ppq, canvasHeight) {
+    //     // console.log(posY, cursor, beatLengthPercent, canvasHeight, ticks, ppq);
+    //     let notePosY = posY - (cursor * (beatLengthPercent * canvasHeight)) - (((ticks / (4 * ppq)) - 2) * beatLengthPercent * canvasHeight);
+    //     return notePosY;
+    // }
 
-    function getWidthNote(noteName, whiteWidth, blackWidth) {
-        if (noteName.length == 3) {
-            return blackWidth;
-        } else {
-            return whiteWidth;
-        }
-    }
+    // function getWidthNote(noteName, whiteWidth, blackWidth) {
+    //     if (noteName.length == 3) {
+    //         return blackWidth;
+    //     } else {
+    //         return whiteWidth;
+    //     }
+    // }
 
-    function getLengthNote(durationTicks, ppq, canvasHeight) {
-        return ((durationTicks * beatLengthPercent * canvasHeight) / (ppq));
-    }
-
-
-    this.drawNoteLines = () => {
-        let canvas = document.getElementById('piano-roll-canvas');
-        let ctx = canvas.getContext('2d');
-        let canvasHeight = canvas.height;
-        let canvasWidth = canvas.width;
-        let whiteWidth = whiteWidthPercent * canvas.width;
-        let blackWidth = blackWidthPercent * canvas.width;
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        ctx.setLineDash([])
-        for (let i = 8; i < trackGrid.length; i++) {
-            let noteList = trackGrid[i];
-            noteList.forEach((note) => {
-                let posX = getPosXNote(note.midiValue, whiteWidth, blackWidth);
-                let posY = getPosYNote(i, note.ticks, this.ppq, canvasHeight);
-                let width = getWidthNote(note.name, whiteWidth, blackWidth);
-                let height = getLengthNote(note.durationTicks, this.ppq, canvasHeight);
-                // console.log(posX, posY, width, height);
-                ctx.beginPath();
-                ctx.fillStyle = 'yellow';
-                ctx.fillRect(posX, posY, width, -height);
-                ctx.stroke();
-            });
-            // break;
-        }
-        posY = posY + speedY;
-        if (isPlaying) {
-            stopId = requestAnimationFrame(this.drawNoteLines);
-        }
-    }
-
-    this.drawTrackGrid = () => {
-        let canvas = document.getElementById('piano-roll-canvas');
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+    // function getLengthNote(durationTicks, ppq, canvasHeight) {
+    //     return ((durationTicks * beatLengthPercent * canvasHeight) / (ppq));
+    // }
 
 
-        posY = canvas.height;
-        // console.log(context);
-        // drawGridLines(context, canvas.width, canvas.height);
-        // stopId = requestAnimationFrame(this.drawGridLines);
-        stopId = requestAnimationFrame(this.drawNoteLines);
-    }
+    // this.drawNoteLines = () => {
+    //     let canvas = document.getElementById('piano-roll-canvas');
+    //     let ctx = canvas.getContext('2d');
+    //     let canvasHeight = canvas.height;
+    //     let canvasWidth = canvas.width;
+    //     let whiteWidth = whiteWidthPercent * canvas.width;
+    //     let blackWidth = blackWidthPercent * canvas.width;
+    //     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    //     ctx.setLineDash([])
+    //     for (let i = 8; i < trackGrid.length; i++) {
+    //         let noteList = trackGrid[i];
+    //         noteList.forEach((note) => {
+    //             let posX = getPosXNote(note.midiValue, whiteWidth, blackWidth);
+    //             let posY = getPosYNote(i, note.ticks, this.ppq, canvasHeight);
+    //             let width = getWidthNote(note.name, whiteWidth, blackWidth);
+    //             let height = getLengthNote(note.durationTicks, this.ppq, canvasHeight);
+    //             // console.log(posX, posY, width, height);
+    //             ctx.beginPath();
+    //             ctx.fillStyle = 'yellow';
+    //             ctx.fillRect(posX, posY, width, -height);
+    //             ctx.stroke();
+    //         });
+    //         // break;
+    //     }
+    //     posY = posY + speedY;
+    //     if (isPlaying) {
+    //         stopId = requestAnimationFrame(this.drawNoteLines);
+    //     }
+    // }
 
     this.initializeTrackGrid = () => {
         if (trackGrid.length == 0) {
@@ -211,7 +191,7 @@ export function PianoPlayer() {
             }
 
         }
-        this.drawTrackGrid();
+        drawInitialPianoRoll(cursor, trackGrid, this.ppq);
         console.log(trackGrid);
     }
 
@@ -263,28 +243,24 @@ export function PianoPlayer() {
             return;
         }
         notes.forEach((note) => {
-            let relativeTime = new Tone.Time((note.ticks % ppq) + "i");
+            let relativeTimeStart = new Tone.Time((note.ticks % ppq) + "i");
+            // let relatvieTimeEnd = new Tone.Time((note.durationTicks))
             Tone.Draw.schedule(function () {
-                // let pianoRoll = document.getElementsByClassName('piano-roll')[0];
-
                 setTimeout(() => {
                     let pianoKey = document.getElementById(getKeyId(note.name));
-                    pianoKey.classList.add("active");
-                    // console.log("active");
+                    if (!pianoKey.classList.contains('active')) {
+                        pianoKey.classList.add("active");
+                    }
                     setTimeout(() => {
                         let pianoKey = document.getElementById(getKeyId(note.name));
-                        pianoKey.classList.remove("active");
-                        // console.log("inactive");
-                    }, note.duration * 1000);
-                }, relativeTime * 1000);
-
-                // console.log("Key: ", pianoKey);
-                // pianoKey
+                        if (pianoKey.classList.contains('active')) {
+                            pianoKey.classList.remove("active");
+                        }
+                    }, (note.duration * 1000) - 50);
+                }, relativeTimeStart * 1000);
             }, time)
-            sampler.triggerAttackRelease(note.name, note.duration, time + relativeTime.toSeconds(), note.velocity)
-
+            sampler.triggerAttackRelease(note.name, note.duration, time + relativeTimeStart.toSeconds(), note.velocity)
         });
-        ++cursor;
     }
 
     this.updateProgressBar = (cursor, trackDuration) => {
@@ -301,10 +277,11 @@ export function PianoPlayer() {
                 Tone.Transport.scheduleRepeat(time => {
                     this.playBeat(this.sampler, time, this.ppq);
                     this.updateProgressBar(cursor, trackDuration);
+                    animatePianoRoll(cursor, trackGrid, this.ppq, this.tempo);
+                    ++cursor;
                 }, (this.ppq + "i"));
                 Tone.Transport.start();
                 isPlaying = true;
-                this.drawNoteLines();
             });
         } else {
             Tone.Transport.start();
@@ -314,15 +291,19 @@ export function PianoPlayer() {
     this.pause = () => {
         console.log("Pause");
         Tone.Transport.pause();
-
     }
 
     this.stop = () => {
         console.log("Stop");
-        Tone.Transport.stop();
-        cursor = 0;
-        this.updateProgressBar(0, trackGrid.length);
-        cancelAnimationFrame(stopId);
+        isPlaying = false;
+        Tone.Transport.pause();
+        setTimeout(() => {
+            cursor = 0;
+            drawInitialPianoRoll(cursor, trackGrid, this.ppq);
+            this.updateProgressBar(0, trackGrid.length);
+            Tone.Transport.stop();
+            // this.initializeTrackGrid();
+        }, (60 * 1000) / this.tempo);
     }
 
     this.playNote = (key) => {
