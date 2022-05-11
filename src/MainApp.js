@@ -151,6 +151,9 @@ function MainApp(props) {
     }
 
     function parseFileLink(fileLink) {
+        audioContext.resume().then(() => {
+            console.log('Playback resumed successfully');
+        });
         let midiFile = Midi.fromUrl(fileLink);
         midiFile.then((midi) => {
             console.log("midi: ", midi);

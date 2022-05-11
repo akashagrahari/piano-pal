@@ -1,10 +1,16 @@
 
+import { isFirefox } from 'react-device-detect';
+
 // let whiteWidthPercent = 0.0255;
 let whiteWidth;
 let blackWidth;
 // let blackWidthPercent = 0.01125;
 const beatLengthPercent = 0.4;
 const zeroPointMidiValue = 24;
+let denominator = 100;
+if (isFirefox) {
+    denominator = 101;
+}
 let canvas;
 let ctx;
 let canvasHeight;
@@ -144,5 +150,5 @@ export function animatePianoRoll(cursor, trackGrid, ppq, tempo) {
         drawGridLines(cursor, trackGrid);
         drawNotes(cursor, trackGrid, ppq, beatLength);
 
-    }, timeOneBeat / 101);
+    }, timeOneBeat / denominator);
 }
