@@ -19,7 +19,14 @@
         }
       },
       "auth": {
-        "pianopal71979935": {}
+        "pianopal71979935": {},
+        "true": {}
+      },
+      "function": {
+        "S3Triggerc6174faf": {
+          "deploymentBucketName": "amplify-pianopal-main-201102-deployment",
+          "s3Key": "amplify-builds/S3Triggerc6174faf-666c5a4e6d304550486c-build.zip"
+        }
       }
     }
   },

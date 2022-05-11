@@ -7,5 +7,6 @@ type Track @model {
   title: String!
   artist: String!
   type: String
-  midi: String!
+  rating: Float
+  owner: String
 }

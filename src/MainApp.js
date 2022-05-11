@@ -10,15 +10,16 @@ import {
     ListGroupItem,
     InputGroup,
     FormControl,
+    // Form,
 } from 'react-bootstrap'
 import Sketch from "react-p5";
 import * as Tone from 'tone'
 import { PianoPlayer } from './PianoPlayer';
 import * as AWS from 'aws-sdk';
 import { ConfigurationOptions } from 'aws-sdk';
-import { API, graphqlOperation } from "aws-amplify";
+import { API, graphqlOperation, Storage } from "aws-amplify";
 import { createTrack } from './graphql/mutations';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // AWS.config.update({ region: 'us-east-1' });
 const docClient = new AWS.DynamoDB.DocumentClient();
@@ -28,15 +29,21 @@ const { Midi } = require('@tonejs/midi');
 
 
 function MainApp(props) {
+    const { state } = useLocation();
     const [player, setPlayer] = useState();
     const [intro, setIntro] = useState();
     const [showTracks, setShowTracks] = useState();
     const [tracks, setTracks] = useState();
     const [isTrackSelected, setIsTrackSelected] = useState();
     const navigate = useNavigate();
+    const audioContext = new AudioContext();
     // const [songs, setSongs] = useState();
 
     useEffect(() => {
+        console.log("songId:", state);
+
+
+
         if (!player) {
             let pianoPlayer = new PianoPlayer();
             pianoPlayer.initializeSampler();
@@ -51,8 +58,17 @@ function MainApp(props) {
         if (isTrackSelected) {
             player.initializeTrackGrid();
         }
-    });
+        if (state && !tracks && player) {
+            downloadSong(state);
+        }
+    }, [player, showTracks, tracks, isTrackSelected]);
 
+
+    async function downloadSong(songId) {
+        const result = await Storage.get(songId + '.midi', { level: 'public', type: 'audio/midi', download: false });
+        console.log("Downloading: ", result);
+        parseFileLink(result);
+    }
     // async function fetchTracks() {
     //     try {
     //         const tracksData = await API.graphql(graphqlOperation(listTracks))
@@ -69,6 +85,7 @@ function MainApp(props) {
     }
 
     function handlePlay(e) {
+        Tone.start();
         player.play();
     }
 
@@ -86,6 +103,9 @@ function MainApp(props) {
 
     function handleCloseMode() {
         setIntro(true);
+        audioContext.resume().then(() => {
+            console.log('Playback resumed successfully');
+        });
     }
 
     function handleShowMode() {
@@ -109,10 +129,6 @@ function MainApp(props) {
     }
 
 
-    function demoTrack() {
-
-    }
-
     function selectTrack(track) {
         player.selectTrack(track.target.id);
         setIsTrackSelected(true);
@@ -134,46 +150,35 @@ function MainApp(props) {
         // $('[data-toggle="tooltip"]').tooltip();
     }
 
+    function parseFileLink(fileLink) {
+        let midiFile = Midi.fromUrl(fileLink);
+        midiFile.then((midi) => {
+            console.log("midi: ", midi);
+            player.initializeTracks(midi);
+            setIntro(true);
+            setShowTracks(true);
+        }, (error) => {
+            console.log("error in fetch from s3: ", error);
+            alert("Could not get file from the server");
+        });
+    }
+
     function parseFile(file) {
-        let midi;
-        let midiString;
+        audioContext.resume().then(() => {
+            console.log('Playback resumed successfully');
+        });
+        // let midi;
         const reader = new FileReader();
         reader.onload = function (e) {
-            midi = new Midi(e.target.result);
-            // document.querySelector(
-            //     "#ResultsText"
-            // ).value = JSON.stringify(midi, undefined, 2);
-            midiString = JSON.stringify(midi);
-            // document
-            // .querySelector("tone-play-toggle")
-            // .removeAttribute("disabled");
-            // currentMidi = midi;
-            // console.log("midi: ", midi);
+            let midi = new Midi(e.target.result);
             player.initializeTracks(midi);
             setIntro(true);
             setShowTracks(true);
         };
         reader.readAsArrayBuffer(file);
 
-        const uploadFile = async () => {
-            try {
-                const song = {
-                    artist: "placeholder_artist",
-                    midi: midiString,
-                    title: file.name.split('.')[0],
-                    type: "placeholder_type",
-                    id: "123",
-                }
-                const response = await API.graphql(graphqlOperation(createTrack, { input: song }));
-                // const response = await API.graphql(graphqlOperation(createTrack, { input: song }))
-                console.log("response: ", response);
-            } catch (error) {
-                console.log("error: ", error);
-            }
-        }
-
-        uploadFile();
-
+        // uploadFile();
+        // createDbRecord();
     }
 
     function uploadFile(event) {
@@ -222,7 +227,7 @@ function MainApp(props) {
                 <Modal.Body>
                     <div className='row'>
                         <div className='col-sm-6 button-wrapper' >
-                            <input type="file" onChange={uploadFile} className="file-upload" id='browse-midi' />
+                            <input type="file" onChange={uploadFile} className="file-upload" id='browse-midi' accept='audio/midi' />
                             <Button variant="outline-dark header-button" onClick={browseFile}>Upload MIDI  <i className="bi bi-upload "></i></Button>
                         </div>
                         <div className='col-sm-6 button-wrapper' >
@@ -234,7 +239,7 @@ function MainApp(props) {
                             <p className='help-text'>Upload a MIDI file from sources like <a href='https://freemidi.org/' target='_blank'>FreeMidi</a></p>
                         </div>
                         <div className='col-sm-6 button-wrapper' >
-                            <p className='help-text'>Browse MIDI files from the community library</p>
+                            <p className='help-text'>Browse MIDI files from the community library or <strong> submit your own</strong></p>
                         </div>
                     </div>
                     <div className='row'>

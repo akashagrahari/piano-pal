@@ -8,7 +8,8 @@ export const onCreateTrack = /* GraphQL */ `
       title
       artist
       type
-      midi
+      rating
+      owner
       createdAt
       updatedAt
     }
@@ -21,7 +22,8 @@ export const onUpdateTrack = /* GraphQL */ `
       title
       artist
       type
-      midi
+      rating
+      owner
       createdAt
       updatedAt
     }
@@ -34,7 +36,8 @@ export const onDeleteTrack = /* GraphQL */ `
       title
       artist
       type
-      midi
+      rating
+      owner
       createdAt
       updatedAt
     }

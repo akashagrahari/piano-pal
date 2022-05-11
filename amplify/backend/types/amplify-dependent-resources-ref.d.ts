@@ -10,6 +10,20 @@ export type AmplifyDependentResourcesAttributes = {
             "AppClientID": "string"
         }
     },
+    "storage": {
+        "midifiles": {
+            "BucketName": "string",
+            "Region": "string"
+        }
+    },
+    "function": {
+        "S3Triggerc6174faf": {
+            "Name": "string",
+            "Arn": "string",
+            "Region": "string",
+            "LambdaExecutionRole": "string"
+        }
+    },
     "api": {
         "pianopal": {
             "GraphQLAPIKeyOutput": "string",

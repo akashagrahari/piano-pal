@@ -276,6 +276,9 @@ export function PianoPlayer() {
 
     this.play = () => {
         console.log("Play");
+        // if (Tone.context.state !== 'running') {
+        //     Tone.context.resume();
+        // }
         let trackDuration = trackGrid.length;
         if (playerState == 'stop') {
             Tone.loaded().then(() => {

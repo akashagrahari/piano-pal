@@ -8,7 +8,8 @@ export const getTrack = /* GraphQL */ `
       title
       artist
       type
-      midi
+      rating
+      owner
       createdAt
       updatedAt
     }
@@ -26,7 +27,8 @@ export const listTracks = /* GraphQL */ `
         title
         artist
         type
-        midi
+        rating
+        owner
         createdAt
         updatedAt
       }

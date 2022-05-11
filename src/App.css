@@ -53,6 +53,12 @@
   padding-bottom: 12%;
 }
 
+.directory {
+  padding-top: 5%;
+  max-width: 80%;
+  padding-bottom: 12%;
+}
+
 .piano-img {
   width: 100%;
 }
@@ -224,6 +230,14 @@ canvas {
 
 .upload {
   margin-right: 0em;
+}
+
+.submit {
+  float: right;
+}
+
+.submit .loader {
+  display: none;
 }
 
 .track-list {

@@ -1,0 +1,16 @@
+{
+  "resourceName": "midifiles",
+  "policyUUID": "c738cae8",
+  "bucketName": "pianopal8fac2a6e41b049fa98fa833e41cf6364",
+  "storageAccess": "authAndGuest",
+  "guestAccess": [
+    "READ"
+  ],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "S3Triggerc6174faf",
+  "groupAccess": {}
+}

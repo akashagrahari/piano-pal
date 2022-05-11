@@ -31,8 +31,30 @@
       }
     }
   },
-  "storage": {},
-  "function": {},
+  "storage": {
+    "midifiles": {
+      "service": "S3",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "S3Triggerc6174faf",
+          "attributes": [
+            "Name",
+            "Arn",
+            "LambdaExecutionRole"
+          ]
+        }
+      ]
+    }
+  },
+  "function": {
+    "S3Triggerc6174faf": {
+      "service": "Lambda",
+      "providerPlugin": "awscloudformation",
+      "build": true
+    }
+  },
   "api": {
     "pianopal": {
       "service": "AppSync",
