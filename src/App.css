@@ -53,6 +53,12 @@
   padding-bottom: 12%;
 }
 
+.video {
+  /* padding-top: 2%; */
+  max-width: 50%;
+  padding-bottom: 12%;
+}
+
 .directory {
   padding-top: 5%;
   max-width: 80%;

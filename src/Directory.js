@@ -78,7 +78,8 @@ function Directory(props) {
     }
 
     function openSubmitFileWizard() {
-        setUploadWizard(true);
+        // setUploadWizard(true);
+        alert("Unsupported for now. We are still trying to resolve specific issues due to different kinds of midi inputs. Try one from the directory in the meanwhile");
     }
 
     function submitFile(event) {

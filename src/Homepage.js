@@ -13,6 +13,7 @@ import pianobg from './images/piano2.png';
 import {
     BiFileFind,
 } from 'react-icons/bi'
+import ReactPlayer from "react-player"
 
 import {
     BsUpload,
@@ -60,6 +61,13 @@ function Homepage(props) {
                             </div>
                         </div>
                     </div>
+                </div>
+            </Container>
+            <Container fluid className='jumbotron text-center video'>
+                <div className='container-fluid '>
+                    <ReactPlayer
+                        url="https://vimeo.com/709671835"
+                    />
                 </div>
             </Container>
         </div>
