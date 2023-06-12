@@ -1,3 +1,13 @@
+# Piano Pal
+
+An app which generates an instructional piano roll for any midi track.
+
+### Demo
+
+https://github.com/akashagrahari/piano-pal/assets/2344230/5d55dda5-dc0e-4eaa-8537-0f7c014552ac
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
